@@ -169,13 +169,13 @@ app.get("/", (req, res) => {
 });
 
 //starts the server
-const PORT = process.env.PORT || 10007;
+const PORT = process.env.PORT || 8080;
 
 if (require.main === module) {
-  // Start the app only when running this file directly
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
 }
+
 
 module.exports = app;
