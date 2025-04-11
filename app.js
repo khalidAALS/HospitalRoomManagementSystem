@@ -13,14 +13,15 @@ const csrf = require("csurf");
 const app = express();
 
 //mongoDB connection
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("MongoDB Connected"))
-.catch((err) => {
-  console.error("MongoDB Connection Error:", err.message);
-  process.exit(1); 
-});
-
-
+(async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("MongoDB Connected");
+  } catch (err) {
+    console.error("MongoDB Connection Error:", err);
+    process.exit(1);
+  }
+})();
 
 //middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -172,10 +173,15 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 8080;
 
 if (require.main === module) {
-  app.listen(PORT, () => {
+  app.listen(PORT, (err) => {
+    if (err) {
+      console.error("Server failed to start:", err);
+      process.exit(1);
+    }
     console.log(`Server running on port ${PORT}`);
   });
 }
+
 
 
 module.exports = app;
