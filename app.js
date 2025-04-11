@@ -1,4 +1,6 @@
 const path = require('path');
+require("dotenv").config();
+
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -11,12 +13,16 @@ const csrf = require("csurf");
 const app = express();
 
 //mongoDB connection
-mongoose.connect("mongodb://20.0.153.128:10999/khalidDB")
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => {
-    console.error("MongoDB Connection Error:", err.message);
-    process.exit(1); 
-  });
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("MongoDB Connected"))
+.catch((err) => {
+  console.error("MongoDB Connection Error:", err.message);
+  process.exit(1); 
+});
+
 
 
 //middleware
