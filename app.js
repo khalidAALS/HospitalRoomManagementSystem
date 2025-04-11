@@ -15,15 +15,24 @@ console.log("✅ Express app initialized");
 
 
 //mongoDB connection
+const PORT = process.env.PORT || 8080;
+
 (async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    console.log("MongoDB Connected");
+    console.log("✅ MongoDB Connected");
+
+    if (require.main === module) {
+      app.listen(PORT, () => {
+        console.log(`✅ Server is running on http://localhost:${PORT}`);
+      });
+    }
   } catch (err) {
-    console.error("MongoDB Connection Error:", err);
+    console.error("❌ MongoDB Connection Error:", err.message);
     process.exit(1);
   }
 })();
+
 
 //middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -174,7 +183,7 @@ app.get("/", (req, res) => {
 console.log("✅ Middleware and routes setup complete");
 
 //starts the server
-const PORT = process.env.PORT || 8080;
+//const PORT = process.env.PORT || 8080;
 
 if (require.main === module) {
   app.listen(PORT, (err) => {
