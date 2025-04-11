@@ -163,20 +163,27 @@ app.get("/dashboard_staff", requireStaff, async (req, res) => {
   }
 });
 
-
-// adds a root
+// adds secure root route
 app.get("/", (req, res) => {
-  console.log("Root route hit - verifying app is fully running");
-  res.send(`
-    <h1>Hospital Room Management System</h1>
-    <p>Status: <strong>Fully Operational</strong></p>
-    <p>Try these links:</p>
-    <ul>
-      <li><a href="/patients">Patients</a></li>
-      <li><a href="/rooms">Rooms</a></li>
-    </ul>
-  `);
+  console.log("Root route hit");
+
+  if (!req.session.user) {
+    console.log("Unauthenticated user, redirecting to /login");
+    return res.redirect("/login");
+  }
+
+  const role = req.session.user.role;
+  console.log(`Authenticated user (${role}), redirecting to dashboard`);
+
+  if (role === "admin") {
+    return res.redirect("/dashboard_admin");
+  } else if (role === "staff") {
+    return res.redirect("/dashboard_staff");
+  } else {
+    return res.status(403).send("Unauthorized role");
+  }
 });
+
 
 
 console.log("✅ Middleware and routes setup complete");
