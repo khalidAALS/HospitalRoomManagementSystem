@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/users");
-const bcrypt = require("bcrypt");
+const bcryptjs = require('bcryptjs');
+
 
 // admin middleware
 function requireAdmin(req, res, next) {
@@ -27,7 +28,7 @@ router.post("/signup", async (req, res) => {
       return res.render("signup", { error: "Username already exists.", success: null });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcryptjs.hash(password, 10);
 
     const newUser = new User({
       username,
@@ -61,7 +62,7 @@ router.post("/login", async (req, res) => {
       return res.status(401).render("login", { error: "Invalid username or password." });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcryptjs.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).render("login", { error: "Invalid username or password." });
     }
