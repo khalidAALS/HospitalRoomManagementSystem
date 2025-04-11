@@ -11,6 +11,8 @@ const csrf = require("csurf");
 
 
 const app = express();
+console.log("✅ Express app initialized");
+
 
 //mongoDB connection
 (async () => {
@@ -155,7 +157,6 @@ app.get("/dashboard_staff", requireStaff, async (req, res) => {
 
 
 // adds a root
-
 app.get("/", (req, res) => {
   console.log("Root route hit - verifying app is fully running");
   res.send(`
@@ -168,6 +169,9 @@ app.get("/", (req, res) => {
     </ul>
   `);
 });
+
+
+console.log("✅ Middleware and routes setup complete");
 
 //starts the server
 const PORT = process.env.PORT || 8080;
