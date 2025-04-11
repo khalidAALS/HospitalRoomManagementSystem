@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Room List</title>
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+  <%- include("../partials/navbar") %>
+
+  <div class="container">
+    <h1>All Rooms</h1>
+    <br><br>
+
+    <table border="1">
+      <tr>
+        <th>Room Number</th>
+        <th>Type</th>
+        <th>Capacity</th>
+        <th>Available</th>
+        <th>Actions</th>
+      </tr>
+
+      <% rooms.forEach(room => { %>
+        <tr>
+          <td>
+            <a href="/rooms/<%= room._id %>"><%= room.roomNumber %></a>
+          </td>
+          <td><%= room.type %></td>
+          <td><%= room.capacity %></td>
+          <td><%= room.isAvailable ? "✅ Yes" : "❌ No" %></td>
+          <td>
+            <a href="/rooms/<%= room._id %>/edit">Edit</a>
+            <form action="/rooms/<%= room._id %>?_method=DELETE" method="POST" style="display:inline;">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </table>
+
+    <br>
+    <a href="/rooms/new">Add New Room</a> |
+    <a href="/<%= session.user.role === 'admin' ? 'dashboard_admin' : 'dashboard_staff' %>">Return to Dashboard</a>
+  </div>
+
+  <%- include("../partials/footer") %>
+</body>
+</html>

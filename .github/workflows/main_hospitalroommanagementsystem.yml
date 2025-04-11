@@ -1,0 +1,35 @@
+name: Node.js Azure Deployment
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      #  creates a clean deployment folder
+      - name: Prepare deployment
+        run: |
+          mkdir -p deployment
+          rsync -av --exclude='.git/' --exclude='.github/' --exclude='node_modules/' ./ deployment/
+          cd deployment && zip -r ../deploy.zip . && cd ..
+          ls -la
+
+      - name: Deploy to Azure
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'hospitalroommanagementsystem'
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: deploy.zip

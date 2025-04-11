@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Signup Successful</title>
+  <link rel="stylesheet" href="/styles/main.css" />
+
+</head>
+<body>
+  <%- include("partials/navbar") %>
+
+  <div class="toast">Signup successful! Waiting for admin approval.</div> <!-- success message and instructions-->
+
+  <script>
+    // redirects to login after 3 seconds
+    setTimeout(() => {
+      window.location.href = "/login";
+    }, 3000);
+  </script>
+</body>
+</html>
+

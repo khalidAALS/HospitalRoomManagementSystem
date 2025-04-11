@@ -1,0 +1,29 @@
+{
+  "name": "hospitalroommanagementsystem",
+  "version": "1.0.0",
+  "description": "Hospital Room Management System - Node.js App",
+  "scripts": {
+  "start": "node app.js",
+  "test": "NODE_ENV=test mocha"
+  },
+  "keywords": [],
+  "author": "Khalid Alsayed",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^2.2.0",
+    "chai": "^4.3.7",
+    "csurf": "^1.11.0",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "method-override": "^3.0.0",
+    "mongodb": "^6.15.0",
+    "mongoose": "^8.13.2"
+  },
+  "devDependencies": {
+    "mocha": "^11.1.0",
+    "supertest": "^7.1.0"
+  }
+}

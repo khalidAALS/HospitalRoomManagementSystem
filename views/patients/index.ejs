@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Patient List</title> <!-- page title-->
+  <link rel="stylesheet" href="/styles/main.css"> <!-- page style via css-->
+</head>
+<body>
+  <h1>All Patients</h1>
+  <%- include("../partials/navbar") %> <!-- includes navbar-->
+  <br><br>
+
+  <% if (patients.length === 0) { %>
+    <p>No Patients Found.</p>
+  <% } else { %>
+
+    <!--  form for search and filter-->
+    <form method="GET" action="/patients">
+      <input type="text" name="name" placeholder="Search by Name" value="<%= query.name || '' %>">
+      <select name="condition">
+        <option value="">All Conditions</option> <!-- filter by condition-->
+        <% uniqueConditions.forEach(function(c) { %>
+          <option value="<%= c %>" <%= query.condition === c ? 'selected' : '' %>><%= c %></option>
+        <% }) %>
+      </select>
+      <select name="isIsolated"> <!-- filter by isolation status-->
+        <option value="">Isolation Status</option>
+        <option value="true" <%= query.isIsolated === 'true' ? 'selected' : '' %>>Isolated</option>
+        <option value="false" <%= query.isIsolated === 'false' ? 'selected' : '' %>>Not Isolated</option>
+      </select>
+      <input type="text" name="room" placeholder="Room Number" value="<%= query.room || '' %>">
+      <button type="submit">Search</button> <!-- filter by room-->
+    </form>
+
+    <!-- page buttons -->
+    <div class="center">
+      <a href="/patients/isolation/evaluate"><button>Evaluate Isolation Priority</button></a>
+      <a href="/patients/isolation/list"><button>View Isolated Patients</button></a>
+    </div>
+
+    <table border="1">
+      <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Condition</th>
+        <th>Room</th>
+        <th>Isolation</th>
+        <th>Actions</th>
+      </tr>
+
+      <% patients.forEach(function(patient) { %> <!-- loops through patients-->
+        <tr>
+          <td><a href="/patients/<%= patient._id %>"><%= patient.name %></a></td> <!-- name clickable luinks to patient details-->
+          <td><%= patient.age %></td> 
+          <td><%= patient.condition %></td>
+          <td><%= patient.room || "Unassigned" %></td>
+          <td><%= patient.isIsolated ? "✅ Yes" : "❌ No" %></td>
+          <td>
+            <form action="/patients/<%= patient._id %>/edit" method="GET" style="display:inline;">
+              <button type="submit">Edit</button>
+            </form>
+
+            <form action="/patients/<%= patient._id %>?_method=DELETE" method="POST" style="display:inline;"> <!-- deletes patient using method override-->
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit">Delete</button>
+            </form>
+            
+            <% if (patient.room) { %>
+              <form action="/patients/<%= patient._id %>/unassign" method="POST" style="display:inline;">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit">Unassign Room</button>
+              </form>
+            <% } %>
+
+            <form action="/patients/<%= patient._id %>/discharge" method="POST" style="display:inline;"> <!-- discharge patient-->
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit">Discharge</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </table>
+  <% } %>
+
+  <br>
+  <div class="center">
+    <a href="/patients/new"><button>Add New Patient</button></a>
+    <a href="/rooms/assign"><button>Assign Room</button></a>
+  </div>
+  <%- include("../partials/footer") %> <!-- includes footer-->
+</body>
+</html>

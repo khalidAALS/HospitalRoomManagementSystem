@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Staff Signup</title>
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+
+  <%- include("partials/navbar") %>
+  <h1>Staff Signup</h1>
+  <br><br>
+
+  <% if (typeof success !== 'undefined' && success == '1') { %>
+    <div class="success-message">
+      ✅ Your account has been created. Awaiting admin approval...
+    </div>
+    <script>
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 3000);
+    </script>
+  <% } else { %>
+
+    <% if (typeof error !== 'undefined') { %>
+      <p style="color: red; text-align: center;"><%= error %></p>
+    <% } %>
+
+    <form action="/signup" method="POST">
+      <!-- CSRF Token -->
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <label>Username:</label>
+      <input type="text" name="username" required autocomplete="username">
+      <br>
+
+      <label>Password:</label>
+      <input type="password" name="password" required autocomplete="new-password">
+      <br>
+
+      <button type="submit">Sign Up</button>
+    </form>
+
+    <p class="center">After signing up, your account will need to be approved by an admin before you can log in.</p> <!-- instructions on successful signup-->
+  <% } %>
+
+  <%- include("partials/footer") %>
+</body>
+</html>

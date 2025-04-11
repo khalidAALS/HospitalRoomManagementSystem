@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"> <!-- character encoding -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--responsiveness-->
+    <title>Edit Patient</title>
+    <link rel="stylesheet" href="/styles/main.css"> <!-- links to css for styling-->
+</head>
+<body>
+    <h1>Edit Patient</h1>
+    <%- include("../partials/navbar") %> <!-- includes the navbar-->
+    <br><br>
+        <!--edit form that uses PUT with method override -->
+    <form action="/patients/<%= patient._id %>?_method=PUT" method="POST">
+        <!-- CSRF token hidden -->
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <label>Name:</label> <!-- name input field-->
+        <input type="text" name="name" value="<%= patient.name %>" required><br><br>
+
+        <label>Age:</label> <!-- age input field-->
+        <input type="number" name="age" value="<%= patient.age %>" required><br><br>
+
+        <label>Condition:</label> <!-- drop down for condition pre set-->
+        <select name="condition" required>
+            <option value="Low" <%= patient.condition === "Low" ? "selected" : "" %>>Low</option>
+            <option value="Medium" <%= patient.condition === "Medium" ? "selected" : "" %>>Medium</option>
+            <option value="High" <%= patient.condition === "High" ? "selected" : "" %>>High</option>
+        </select><br><br>
+
+        <label>Room:</label>
+        <input type="text" name="room" value="<%= patient.room %>"><br><br>
+
+        <button type="submit">Update Patient</button>
+    </form>
+
+    <br>
+    <a href="/patients">Cancel</a>
+    <%- include("../partials/footer") %> <!-- includes footer-->
+
+</body>
+</html>

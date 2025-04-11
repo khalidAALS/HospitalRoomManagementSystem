@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Patient</title>
+    <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+    <%- include("../partials/navbar") %>
+
+    <div class="container">
+        <h1>Add New Patient</h1>
+
+        <form action="/patients" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+            <label>Name:</label> <!-- name input-->
+            <input type="text" name="name" required><br>
+
+            <label>Age:</label> <!-- age input-->
+            <input type="number" name="age" required><br>
+
+            <label>Condition:</label> <!-- condition input-->
+            <select name="condition" required>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select><br>
+
+            <label>Symptoms (comma-separated):</label> <!-- patient symptoms input-->
+            <input type="text" name="symptoms"><br>
+
+            <label>Infection Risk:</label> <!-- infesction risk dropdown preset to yes or no-->
+            <select name="infectionRisk">
+                <option value="false">No</option>
+                <option value="true">Yes</option>
+            </select><br>
+
+            <button type="submit">Add Patient</button>
+        </form>
+
+        <br>
+        <a href="/patients">Back to Patient List</a>
+    </div>
+    <%- include("../partials/footer") %>
+
+</body>
+</html>

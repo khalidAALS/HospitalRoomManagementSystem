@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/styles/main.css"> <!-- includes page styling-->
+</head>
+<body>
+
+  <%- include("partials/navbar") %> <!-- includes navbar-->
+
+  <h1>Admin Dashboard</h1>
+  <br><br>
+
+  <h2>Hospital Summary</h2> <!-- statistic summary-->
+  <div class="dashboard-summary">
+    <div class="summary-box">
+      <h3>Total Patients</h3>
+      <p><%= totalPatients %></p> <!-- total number of patients-->
+    </div>
+    <div class="summary-box">
+      <h3>Isolated Patients</h3>
+      <p><%= isolatedPatients %></p> <!-- total number of isolated patients-->
+    </div>
+    <div class="summary-box">
+      <h3>Total Rooms</h3>
+      <p><%= totalRooms %></p> <!-- total number of rooms-->
+    </div>
+    <div class="summary-box">
+      <h3>Available Rooms</h3>
+      <p><%= availableRooms %></p> <!-- total number of rooms available-->
+    </div>
+  </div>
+
+  <hr>
+
+  <h2>Quick Actions</h2> <!-- quick actions menu buttons-->
+  <div class="quick-actions">
+    <a href="/patients"><button>Manage Patients</button></a>
+    <a href="/rooms"><button>Manage Rooms</button></a>
+    <a href="/patients/new"><button>Add Patient</button></a>
+    <a href="/rooms/new"><button>Add Room</button></a>
+    <a href="/rooms/assign"><button>Assign Room</button></a>
+    <a href="/patients/isolation/evaluate"><button>Run Isolation Check</button></a>
+    <a href="/patients/isolation/list"><button>View Isolated</button></a>
+  </div>
+  
+  <%- include("partials/footer") %>
+
+</body>
+</html>

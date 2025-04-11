@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pending Staff Approvals</title>
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+  <%- include("../partials/navbar") %>
+
+  <div class="container">
+    <h1>Pending Staff Accounts</h1>
+
+    <% if (users.length === 0) { %>
+      <p>No pending users at the moment.</p>
+    <% } else { %>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(user => { %>
+            <tr>
+              <td><%= user.username %></td>
+              <td>
+                <form action="/admin/users/<%= user._id %>/approve" method="POST" style="display:inline;">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="btn-approve" type="submit">Approve</button>
+                </form>
+                <form action="/admin/users/<%= user._id %>?_method=DELETE" method="POST" style="display:inline;">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="btn-delete" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+
+    <br>
+    <a href="/dashboard_admin" class="btn-back">← Back to Dashboard</a>
+  </div>
+  <%- include("../partials/footer") %>
+
+</body>
+</html>

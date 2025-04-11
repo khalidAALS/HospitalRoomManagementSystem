@@ -1,0 +1,19 @@
+<nav class="navbar">
+  <div class="nav-container">
+    <% if (!session.user) { %>
+      <a href="/login" class="nav-link">Login</a>
+      <a href="/signup" class="nav-link">Signup</a>
+    <% } else { %>
+      <% if (session.user.role === 'admin') { %>
+        <a href="/dashboard_admin" class="nav-link">Dashboard</a>
+        <a href="/admin/pending-users" class="nav-link">Approve Staff</a>
+      <% } else if (session.user.role === 'staff') { %>
+        <a href="/dashboard_staff" class="nav-link">Dashboard</a>
+      <% } %>
+      <a href="/patients" class="nav-link">Patients</a>
+      <a href="/rooms" class="nav-link">Rooms</a>
+      <a href="/logout" class="nav-link">Logout</a>
+    <% } %>
+  </div>
+</nav>
+

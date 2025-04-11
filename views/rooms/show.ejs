@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Room Details</title>
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+
+  <%- include("../partials/navbar") %>
+
+  <h1>Room Details</h1>
+  <br><br>
+
+  <p><strong>Room Number:</strong> <%= room.roomNumber %></p>
+  <p><strong>Type:</strong> <%= room.type %></p>
+  <p><strong>Capacity:</strong> <%= room.capacity %></p>
+
+  <hr>
+
+  <a href="/rooms/<%= room._id %>/edit">Edit Room</a> |
+  <a href="/rooms">Back to Room List</a>
+  <%- include("../partials/footer") %>
+
+</body>
+</html>
+

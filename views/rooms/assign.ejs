@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Assign Patient to Room</title>
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+
+  <%- include("../partials/navbar") %> <!-- includes navbar-->
+
+  <div class="container">
+    <% if (typeof patient !== "undefined") { %>
+      <h1>Assign Room to <%= patient.name %></h1>
+
+      <form action="/rooms/assign" method="POST"> <!-- post method to assign room-->
+        <input type="hidden" name="patientId" value="<%= patient._id %>">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>"> <!-- hidden CSRF protection-->
+
+        <label for="roomNumber">Select Room:</label> <!-- room number input-->
+        <select name="roomNumber" required>
+          <% rooms.forEach(room => { %>
+            <option value="<%= room.roomNumber %>">
+              Room <%= room.roomNumber %> - Type: <%= room.type %> - Capacity: <%= room.capacity %>
+            </option>
+          <% }) %>
+        </select>
+
+        <br><br>
+        <button type="submit">Assign Room</button> <!-- submits the room form-->
+      </form>
+
+    <% } else if (typeof patients !== "undefined") { %>
+      <h1>Select a Patient to Assign</h1>
+      <ul>
+        <% patients.forEach(p => { %>
+          <li>
+            <%= p.name %> — <!-- displays the patients name-->
+            <a href="/rooms/assign/<%= p._id %>">Assign Room</a>
+          </li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p>No data provided to assign rooms.</p>
+    <% } %>
+
+    <br>
+    <a href="/patients">Back to Patient List</a>
+  </div>
+
+  <%- include("../partials/footer") %>
+</body>
+</html>
