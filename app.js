@@ -9,7 +9,6 @@ const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
 const csrfProtection = require("csurf");
 
-
 const app = express();
 console.log("✅ Express app initialized");
 
