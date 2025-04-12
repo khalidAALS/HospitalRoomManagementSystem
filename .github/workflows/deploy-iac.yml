@@ -19,8 +19,10 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Run tests with MONGO_URI
-      run: MONGO_URI=${{ secrets.MONGO_URI }} npm test
+    - name: Run tests
+      run: npm test
+      env:
+        MONGO_URI: ${{ secrets.MONGO_URI_IAC }}
 
     - name: Deploy to Azure Web App (IaC)
       uses: azure/webapps-deploy@v2
