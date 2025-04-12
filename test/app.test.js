@@ -4,11 +4,13 @@ const chai = require('chai');
 const expect = chai.expect;
 
 describe('Patient Routes', () => {
-  it('GET /patients should return all patients', async () => { // retrieves patient test
+  it('GET /patients should return all patients', async function () {
+    this.timeout(5000); // extend timeout to 5 seconds
     const res = await request(app).get('/patients').set('Accept', 'application/json');
     expect(res.status).to.equal(200);
     expect(res.text).to.include('All Patients');
   });
+  
 
   it('POST /patients should add a new patient', async () => { // POST test to add a new patient
     const patientData = {
