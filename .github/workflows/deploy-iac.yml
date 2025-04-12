@@ -19,15 +19,18 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Show MONGO_URI for debugging (do not worry, this doesn't expose it)
-      run: echo "MONGO_URI is set: ${{ secrets.MONGO_URI != '' }}"
+    - name: Verify MONGO_URI is present in secrets
+      run: echo "MONGO_URI secret is set: ${{ secrets.MONGO_URI != '' }}"
 
-    - name: Run tests with explicit MONGO_URI injection
+    - name: Run tests with inline injected MONGO_URI
       run: |
-        echo "Running tests with injected MONGO_URI..."
-        MONGO_URI="${{ secrets.MONGO_URI }}" NODE_ENV=test npx mocha
+        echo "Starting test with MONGO_URI env injected inline"
+        echo "::add-mask::${{ secrets.MONGO_URI }}"
+        MONGO_URI="${{ secrets.MONGO_URI }}" NODE_ENV=test mocha
+      shell: bash
 
     - name: Deploy to Azure Web App (IaC)
+      if: success()
       uses: azure/webapps-deploy@v2
       with:
         app-name: hospitalroommanagement-iac
