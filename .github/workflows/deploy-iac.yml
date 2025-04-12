@@ -7,7 +7,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    env:  # 👈 Set globally so it's available to all steps
+    env:
       MONGO_URI: ${{ secrets.MONGO_URI }}
 
     steps:
@@ -21,6 +21,9 @@ jobs:
 
     - name: Install dependencies
       run: npm install
+
+    - name: Debug MONGO_URI
+      run: echo "MONGO_URI is: $MONGO_URI"
 
     - name: Run tests
       run: npm test
