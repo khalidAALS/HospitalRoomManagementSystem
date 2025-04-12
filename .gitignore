@@ -1,5 +1,2 @@
 .env
-terraform/.terraform/
-terraform/terraform.tfvars
-terraform/main.tf
-terraform/terraform.tfvars
+
