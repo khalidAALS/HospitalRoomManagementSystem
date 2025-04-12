@@ -9,7 +9,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up Node.js
       uses: actions/setup-node@v3
@@ -19,11 +19,13 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Debug MONGO_URI
-      run: echo "MONGO_URI=${{ secrets.MONGO_URI }}"
+    - name: Show MONGO_URI for debugging (do not worry, this doesn't expose it)
+      run: echo "MONGO_URI is set: ${{ secrets.MONGO_URI != '' }}"
 
-    - name: Run tests with MONGO_URI
-      run: MONGO_URI="${{ secrets.MONGO_URI }}" npm test
+    - name: Run tests with explicit MONGO_URI injection
+      run: |
+        echo "Running tests with injected MONGO_URI..."
+        MONGO_URI="${{ secrets.MONGO_URI }}" NODE_ENV=test npx mocha
 
     - name: Deploy to Azure Web App (IaC)
       uses: azure/webapps-deploy@v2
