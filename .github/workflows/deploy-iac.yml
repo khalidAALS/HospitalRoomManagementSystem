@@ -1,0 +1,33 @@
+name: Deploy to IaC App
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests
+      run: npm test
+      env:
+        MONGO_URI: ${{ secrets.MONGO_URI }}
+
+    - name: Deploy to Azure Web App (IaC)
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: hospitalroommanagement-iac
+        slot-name: production
+        publish-profile: ${{ secrets.IAC_PUBLISH_PROFILE }}
+        package: ${{ github.workspace }}
