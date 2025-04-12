@@ -7,7 +7,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    env:  # global environment variable
+    env:  # 👈 Set globally so it's available to all steps
       MONGO_URI: ${{ secrets.MONGO_URI }}
 
     steps:
