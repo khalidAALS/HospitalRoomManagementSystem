@@ -1,11 +1,16 @@
 name: Deploy to IaC App
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
+    env:
+      MONGO_URI: ${{ secrets.MONGO_URI_IAC }}  # Set globally
 
     steps:
     - name: Checkout code
@@ -21,8 +26,6 @@ jobs:
 
     - name: Run tests
       run: npm test
-      env:
-        MONGO_URI: ${{ secrets.MONGO_URI_IAC }}
 
     - name: Deploy to Azure Web App (IaC)
       uses: azure/webapps-deploy@v2
