@@ -7,6 +7,9 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    env:  # global environment variable
+      MONGO_URI: ${{ secrets.MONGO_URI }}
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -21,8 +24,6 @@ jobs:
 
     - name: Run tests
       run: npm test
-      env:
-        MONGO_URI: ${{ secrets.MONGO_URI }}
 
     - name: Deploy to Azure Web App (IaC)
       uses: azure/webapps-deploy@v2
