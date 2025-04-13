@@ -22,7 +22,6 @@ if (process.env.APPINSIGHTS_CONNECTION_STRING) {
     .setAutoCollectDependencies(true)
     .setAutoDependencyCorrelation(true)
     .setInternalLogging(false, false)
-    .setSendLiveMetrics(true)
     .start();
 
   telemetryClient = appInsights.defaultClient;
