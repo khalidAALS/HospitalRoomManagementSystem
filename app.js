@@ -1,3 +1,18 @@
+const appInsights = require("applicationinsights");
+
+if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
+  appInsights.setup(process.env.APPINSIGHTS_INSTRUMENTATIONKEY)
+    .setAutoDependencyCorrelation(true)
+    .setAutoCollectRequests(true)
+    .setAutoCollectPerformance(true)
+    .setAutoCollectExceptions(true)
+    .setAutoCollectDependencies(true)
+    .setAutoCollectConsole(true, true)
+    .setUseDiskRetryCaching(true)
+    .start();
+}
+
+
 const path = require('path');
 require("dotenv").config();
 
