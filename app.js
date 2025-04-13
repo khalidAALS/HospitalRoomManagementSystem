@@ -1,16 +1,16 @@
 const appInsights = require("applicationinsights");
 
-if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
-  appInsights.setup(process.env.APPINSIGHTS_INSTRUMENTATIONKEY)
-    .setAutoDependencyCorrelation(true)
-    .setAutoCollectRequests(true)
-    .setAutoCollectPerformance(true)
-    .setAutoCollectExceptions(true)
-    .setAutoCollectDependencies(true)
-    .setAutoCollectConsole(true, true)
-    .setUseDiskRetryCaching(true)
-    .start();
-}
+appInsights.setup(process.env.APPINSIGHTS_CONNECTION_STRING || "Your_Connection_String")
+  .setAutoCollectRequests(true)
+  .setAutoCollectPerformance(true)
+  .setAutoCollectExceptions(true)
+  .setAutoCollectDependencies(true)
+  .setAutoDependencyCorrelation(true)
+  .setInternalLogging(false, false)
+  .setSendLiveMetrics(true)
+  .start();
+
+const telemetryClient = appInsights.defaultClient;
 
 
 const path = require('path');
@@ -25,7 +25,7 @@ const bodyParser = require("body-parser");
 const csrfProtection = require("csurf");
 
 const app = express();
-console.log("✅ Express app initialized");
+console.log("Express app initialized");
 
 
 //mongoDB connection
@@ -34,15 +34,19 @@ const PORT = process.env.PORT || 8080;
 (async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    console.log("✅ MongoDB Connected");
+    console.log("MongoDB Connected");
+
+// traces custom telemetry (this helps confirm Application Insights is connected)
+telemetryClient.trackTrace({ message: "MongoDB connected successfully - telemetry active" });
+
 
     if (require.main === module) {
       app.listen(PORT, () => {
-        console.log(`✅ Server is running on http://localhost:${PORT}`);
+        console.log(`Server is running on http://localhost:${PORT}`);
       });
     }
   } catch (err) {
-    console.error("❌ MongoDB Connection Error:", err.message);
+    console.error("MongoDB Connection Error:", err.message);
     process.exit(1);
   }
 })();
@@ -201,7 +205,7 @@ app.get("/", (req, res) => {
 
 
 
-console.log("✅ Middleware and routes setup complete");
+console.log("Middleware and routes setup complete");
 
 //starts the server
 //const PORT = process.env.PORT || 8080;
