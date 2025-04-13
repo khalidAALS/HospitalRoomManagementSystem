@@ -30,6 +30,8 @@ if (process.env.APPINSIGHTS_CONNECTION_STRING) {
 }
 
 const app = express();
+app.set('trust proxy', 1);
+
 
 // MongoDB connection
 const PORT = process.env.PORT || 8080;
