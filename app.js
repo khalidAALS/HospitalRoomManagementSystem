@@ -1,22 +1,5 @@
-const appInsights = require("applicationinsights");
-
-appInsights.setup(process.env.APPINSIGHTS_CONNECTION_STRING || "Your_Connection_String")
-  .setAutoCollectRequests(true)
-  .setAutoCollectPerformance(true)
-  .setAutoCollectExceptions(true)
-  .setAutoCollectDependencies(true)
-  .setAutoDependencyCorrelation(true)
-  .setInternalLogging(false, false)
-  .setSendLiveMetrics(true)
-  .start();
-
-const telemetryClient = appInsights.defaultClient;
-
-
+require("dotenv").config(); 
 const path = require('path');
-require("dotenv").config();
-
-
 const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
@@ -24,11 +7,31 @@ const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
 const csrfProtection = require("csurf");
 
+console.log("✅ Express app initialized");
+
+let telemetryClient = null;
+
+// app insights setup - only if connection string is provided
+if (process.env.APPINSIGHTS_CONNECTION_STRING) {
+  const appInsights = require("applicationinsights");
+
+  appInsights.setup(process.env.APPINSIGHTS_CONNECTION_STRING)
+    .setAutoCollectRequests(true)
+    .setAutoCollectPerformance(true)
+    .setAutoCollectExceptions(true)
+    .setAutoCollectDependencies(true)
+    .setAutoDependencyCorrelation(true)
+    .setInternalLogging(false, false)
+    .setSendLiveMetrics(true)
+    .start();
+
+  telemetryClient = appInsights.defaultClient;
+  telemetryClient.trackTrace({ message: "Application Insights initialized" });
+}
+
 const app = express();
-console.log("Express app initialized");
 
-
-//mongoDB connection
+// MongoDB connection
 const PORT = process.env.PORT || 8080;
 
 (async () => {
@@ -36,9 +39,9 @@ const PORT = process.env.PORT || 8080;
     await mongoose.connect(process.env.MONGO_URI);
     console.log("MongoDB Connected");
 
-// traces custom telemetry (this helps confirm Application Insights is connected)
-telemetryClient.trackTrace({ message: "MongoDB connected successfully - telemetry active" });
-
+    if (telemetryClient) {
+      telemetryClient.trackTrace({ message: "MongoDB connected successfully - telemetry active" });
+    }
 
     if (require.main === module) {
       app.listen(PORT, () => {
@@ -51,8 +54,7 @@ telemetryClient.trackTrace({ message: "MongoDB connected successfully - telemetr
   }
 })();
 
-
-//middleware
+// middleware setup
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
@@ -62,44 +64,37 @@ app.use(session({
   saveUninitialized: true
 }));
 
-// middleware protection CSRF
-//const csrfProtection = require("csurf");
-
-// CSRF is applied when system is ran but notin test mode
-
+// CSRF protection middleware
 if (process.env.NODE_ENV !== "test") {
-  const csrfProtection = require("csurf")();
-  app.use(csrfProtection);
-  
+  const csrf = require("csurf")();
+  app.use(csrf);
   app.use((req, res, next) => {
     res.locals.csrfToken = req.csrfToken();
     next();
   });
 } else {
-  // during tests CSRF is set as a fake token so ejs  doesn't break
+  // fake CSRF token for testing
   app.use((req, res, next) => {
     res.locals.csrfToken = "test-csrf-token";
     next();
   });
 }
 
-
-// middleware to share session data with views
+// middlware to share session with views
 app.use((req, res, next) => {
   res.locals.session = req.session;
   next();
 });
 
-// logs middleware to make traceable and auditable
+// login middleware
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} - User: ${req.session?.user?.username || "Guest"}`);
   next();
 });
 
-
-// role base acess middleware
+// role-based access middleware
 function requireLogin(req, res, next) {
-  if (process.env.NODE_ENV === "test") return next(); // bypasses for testing
+  if (process.env.NODE_ENV === "test") return next();
   if (!req.session.user) return res.redirect("/login");
   next();
 }
@@ -120,30 +115,24 @@ function requireStaff(req, res, next) {
   next();
 }
 
-//sets views engines and statistic files
+// sets view engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use("/styles", express.static(path.join(__dirname, "styles")));
 
-//route imports
+// route imports
 const patientRoutes = require("./routes/patients");
 const roomRoutes = require("./routes/rooms");
 const userRoutes = require("./routes/users");
 const Patient = require("./models/patient");
 const Room = require("./models/rooms");
 
-//applies routes with middleware
-
-// paties routes .. staff or admin only
+// applies routes with middleware
 app.use("/patients", requireLogin, patientRoutes);
-
-// room routes .. admin only
 app.use("/rooms", requireLogin, roomRoutes);
-
-// login and registration routes stay open
 app.use("/", userRoutes);
 
-//dashboards.. admin
+// admin dashboard route
 app.get("/dashboard_admin", requireAdmin, async (req, res) => {
   try {
     const totalPatients = await Patient.countDocuments();
@@ -162,7 +151,8 @@ app.get("/dashboard_admin", requireAdmin, async (req, res) => {
     res.status(500).send("Error loading dashboard.");
   }
 });
-//staff dashboard
+
+// stafff dashboard route
 app.get("/dashboard_staff", requireStaff, async (req, res) => {
   try {
     const totalPatients = await Patient.countDocuments();
@@ -182,7 +172,7 @@ app.get("/dashboard_staff", requireStaff, async (req, res) => {
   }
 });
 
-// adds secure root route
+// securee root route
 app.get("/", (req, res) => {
   console.log("Root route hit");
 
@@ -203,23 +193,7 @@ app.get("/", (req, res) => {
   }
 });
 
-
-
 console.log("Middleware and routes setup complete");
 
-//starts the server
-//const PORT = process.env.PORT || 8080;
-
-if (require.main === module) {
-  app.listen(PORT, (err) => {
-    if (err) {
-      console.error("Server failed to start:", err);
-      process.exit(1);
-    }
-    console.log(`Server running on port ${PORT}`);
-  });
-}
-
-
-
+// server export for testing
 module.exports = app;
