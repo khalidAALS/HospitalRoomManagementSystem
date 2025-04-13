@@ -8,9 +8,9 @@ terraform {
     }
   }
 
-  backend "azurerm" {
-    resource_group_name  = "HospitalRG"
-    storage_account_name = "hospitaltfstate123"
+//  backend "azurerm" {
+//    resource_group_name  = "HospitalRG"
+//    storage_account_name = "hospitaltfstate123"
     container_name       = "tfstate"
     key                  = "terraform.tfstate"
   }

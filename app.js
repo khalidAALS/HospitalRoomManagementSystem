@@ -26,6 +26,10 @@ if (process.env.APPINSIGHTS_CONNECTION_STRING) {
     .start();
 
   telemetryClient = appInsights.defaultClient;
+
+  telemetryClient.trackException({ exception: new Error("Test error for App Insights") });
+  telemetryClient.trackMetric({ name: "CustomStartupMetric", value: Math.random() * 100 });
+
   telemetryClient.trackTrace({ message: "Application Insights initialized" });
 }
 
